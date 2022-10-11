@@ -1,26 +1,33 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const fs = require('fs');
+const cTable = require('console.table');
 
 
 const db = mysql.createConnection(
   {
-    host: 'localhost',
+    host: '127.0.0.1',
     // MySQL username,
-    user: 'root',
+    user: 'employeeTrackerUser',
     // MySQL password
-    password: '',
+    password: 'looksLikeAPassword+',
+    //socketPath: '/tmp/mysql.sock',
     database: 'tracker_db'
   },
   console.log(`Connected to the tracker_db database.`)
 );
 
 db.connect(function(error){
-  if(error) throw error;
-  console.log("there was a problem connecting");
+  if(error){
+    console.log("there was a problem connecting", error);
+    throw error;
+  } else {
+    console.log("Connected to the tracker_db database. For REAL this time! ;)");
+  }
+
 })
 
-const quesrtions = [{
+const questions = [{
   type:'list',
   message: ' What would you like to do?',
   choices: ['View all employees', 'Add employee', 'Update employee role', 'View all roles', 'Add role', 'View all departments', 'Add department'],
@@ -45,8 +52,14 @@ const quesrtions = [{
 },
 {
   type:'list',
-  message:'what is the role of this employee?',
-  name: 'job',
+  message:'what department does this employee work in?',
+  name: 'department',
   choices: []
 }
 ]
+
+inquirer
+.prompt(questions)
+.then((response) => {
+  console.log(response);
+});

@@ -1,13 +1,13 @@
-const mysql = require('mysql2');
-const mysqlPromise =require('mysql2/promise')
+//const mysql = require('mysql2');
+const mysql =require('mysql2/promise')
 const inquirer = require('inquirer');
 const fs = require('fs');
 const cTable = require('console.table');
-var departments = [
-{ value: 1, name: 'IT'},
-{value: 2, name: 'Marketing'},
-{value: 3, name: 'sales'},
-{value: 4, name: 'Customer Service'}]
+ var departments= []; //= [
+// { value: 1, name: 'TESTDATA'},
+// {value: 2, name: 'MORE TEST DATA'},
+// {value: 3, name: 'just more test data'},
+// {value: 4, name: 'last test dept'}]
 var roles = [
   {value: 1, name: 'Manager'},
   {value: 2, name: 'Engineer'},
@@ -23,55 +23,26 @@ var employees = [
 ]
 
 
-const db = mysql.createConnection(
-  {
-    host: '127.0.0.1',
-    // MySQL username,
-    user: 'employeeTrackerUser',
-    // MySQL password
-    password: 'looksLikeAPassword+',
-    //socketPath: '/tmp/mysql.sock',
-    database: 'tracker_db'
-  },
-  console.log(`Connecting config created`)
-)
+mysql.createConnection({
+  host: '127.0.0.1',
+  // MySQL username,
+  user: 'employeeTrackerUser',
+  // MySQL password
+  password: 'looksLikeAPassword+',
+  //socketPath: '/tmp/mysql.sock',
+  database: 'tracker_db'
+})
+  .then(conn => conn.query('SELECT id as value, dep_name as name FROM departments'))
+  .then(([rows, fields]) => {
+    console.log(rows[0].value);
 
-db.connect(function(error){
-//connect to db
-  if(error){
-    console.log("there was a problem connecting", error);
-    throw error;
-  } else {
-    console.log("Connected to the tracker_db database. For REAL this time! ;)");
-  }
+  rows.forEach( element => {
+    departments.push( element)
 
-
-});
-
-function viewDepts(){
-//let departments = db.connect(function(){
-  var result = db.query("SELECT id as value, dep_name as name FROM departments", function (error, result, fields){
-    if(error) throw error;
-    console.log("query result: ",result);
-    return result;
   });
-   console.log("connect result: ",result);
-  return result;
-// });
 
-};
-console.log("viewDepts() returns: ", viewDepts());
-
-// module.exports = {
-//   getDepts: async (req, res) => {
-//   let query = "SELECT id as value, dep_name as name FROM departments";
-//   const [dept] = await db.query(query).catch(error => { throw error});
-//   console.log("dept=", dept);
-//   return dept;
-// }};
-
-viewDepts();
-
+  })
+console.log("departments:", departments);
 
 
 const questions = [{
@@ -102,24 +73,25 @@ const questions = [{
   message:'what department does this employee work in?',
   name: 'department',
   //choices: module.exports.getDepts()
-  choices :
-   [
-      {value : '1', name: 'Marketing'},
-      {value: '2', name: 'Sales'},
-      {value: '3', name:'Customer Support'}
-    ]
+  choices : departments,
+  when: function(answers){
+    return answers.last_name !== ' ';
+  }
 },
 {
   type:'list',
   message: ' What is the job title of this employee?',
   name: 'role',
-  choices: []
+  choices: roles,
+  when: function (answers){
+    return answers.last_name !== ' ';
+  }
 },
 {
   type:'list',
   message: ' which employee would you like to update?',
   name: 'chooseEmployee',
-  choices: [],
+  choices: employees,
   when: function(answers){
     return answers.doWhat == 'Update employee role';
   }
@@ -128,7 +100,7 @@ const questions = [{
   type: 'list',
   message: 'what should the new role of this employee be?',
   name: 'updateRole',
-  choices:[],
+  choices:roles,
   when: function(answers){
     return answers.chooseEmployee!== ' ';
   }
@@ -137,15 +109,15 @@ const questions = [{
   type: 'list',
   message: ' which department does this role fit under?',
   name: 'chooseDept',
-  choices:[],
+  choices:departments,
   when: function (answers){
     return answers.doWhat == ' Add role';
-  },
+  }
+},
   {
     type: 'input',
     message: ' what is the name of this role',
     name: 'addRole',
-    choices: [],
     when: function (answers){
       return answers.chooseDept !== ' ';
     }
@@ -159,7 +131,7 @@ const questions = [{
     }
   }
 
-}
+
 ]
 
 
@@ -171,8 +143,8 @@ const questions = [{
 //   { id: 5, dep_name: 'accounting' }
 // ]
 
-// inquirer
-// .prompt(questions)
-// .then((response) => {
-//   console.log(response);
-// });
+inquirer
+.prompt(questions)
+.then((response) => {
+  console.log(response);
+});

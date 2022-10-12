@@ -31,8 +31,7 @@ mysql.createConnection({
   password: 'looksLikeAPassword+',
   //socketPath: '/tmp/mysql.sock',
   database: 'tracker_db'
-})
-  .then(conn => conn.query('SELECT id as value, dep_name as name FROM departments'))
+}).then(conn => conn.query('SELECT id as value, dep_name as name FROM departments'))
   .then(([rows, fields]) => {
     console.log(rows[0].value);
 
@@ -48,7 +47,7 @@ console.log("departments:", departments);
 const questions = [{
   type:'list',
   message: ' What would you like to do?',
-  choices: ['View all employees', 'Add employee', 'Update employee role', 'View all roles', 'Add role', 'View all departments', 'Add department'],
+  choices: ['View all employees', 'Add employee', 'Update employee role', 'View all roles', 'Add role', 'View all departments', 'Add department', 'Update employee department'],
   name: 'doWhat'
 },
 {
@@ -64,54 +63,43 @@ const questions = [{
   message:' What is the last name of this employee?',
   name: 'last_name',
   when: function (answers){
-    return answers.first_name !== '';
+    //console.log("first name",answers.first_name);
+    return answers.doWhat === 'Add employee'
+      &&  answers.first_name !== undefined;
   }
 
 },
 {
   type:'list',
-  message:'what department does this employee work in?',
-  name: 'department',
+  message:'choose a department',
+  name: 'chooseDept',
   //choices: module.exports.getDepts()
   choices : departments,
   when: function(answers){
-    return answers.last_name !== ' ';
+    return (answers.doWhat === 'Add employee' && answers.first_name !== undefined && answers.last_name !== undefined)
+        || (answers.doWhat === 'Add role')
+        || (answers.doWhat === 'Update employee department' && answers.chooseEmployee !== undefined)
+    ;
   }
 },
 {
   type:'list',
-  message: ' What is the job title of this employee?',
-  name: 'role',
+  message: ' Choose a role',
+  name: 'chooseRole',
   choices: roles,
   when: function (answers){
-    return answers.last_name !== ' ';
+    return (answers.doWhat === 'Add employee' &&answers.first_name !== undefined && answers.last_name !== undefined && answers.chooseDept !==undefined)
+    || (answers.doWhat === 'Update employee role'&& answers.chooseEmployee !== undefined);
   }
 },
 {
   type:'list',
-  message: ' which employee would you like to update?',
+  message: ' Which employee would you like?',
   name: 'chooseEmployee',
   choices: employees,
   when: function(answers){
-    return answers.doWhat == 'Update employee role';
-  }
-},
-{
-  type: 'list',
-  message: 'what should the new role of this employee be?',
-  name: 'updateRole',
-  choices:roles,
-  when: function(answers){
-    return answers.chooseEmployee!== ' ';
-  }
-},
-{
-  type: 'list',
-  message: ' which department does this role fit under?',
-  name: 'chooseDept',
-  choices:departments,
-  when: function (answers){
-    return answers.doWhat == ' Add role';
+    return answers.doWhat == 'Update employee role'
+      || answers.doWhat == 'Update employee department';
   }
 },
   {
@@ -119,7 +107,15 @@ const questions = [{
     message: ' what is the name of this role',
     name: 'addRole',
     when: function (answers){
-      return answers.chooseDept !== ' ';
+      return answers.doWhat == ' Add role' && answers.chooseDept !== undefined;
+    }
+  },
+  {
+    type: 'input',
+    message: ' what is the base salary for this role?',
+    name: 'salary',
+    when: function (answers){
+      return answers.doWhat == ' Add role' && answers.chooseDept !== undefined && answers.addRole !== undefined;
     }
   },
   {
@@ -129,7 +125,8 @@ const questions = [{
     when: function (answers){
       return answers.doWhat == 'Add department'
     }
-  }
+  },
+
 
 
 ]

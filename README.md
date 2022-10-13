@@ -1,5 +1,5 @@
 # EmployeeTracker
-a dailey Command line application using inquirer to manage and add employees, roles and departments on a local mysql database.
+a Command line application using inquirer to manage and add employees, roles and departments on a local mysql database.
 
 # Contributions
 - extra care was made to be sure questions are asked in the correct order 

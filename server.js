@@ -189,7 +189,7 @@ function saveToDB(saveType, ...args){
   // console.log('args00: '+args[0][0]);
   switch(saveType) {
     case 'emp':
-      pool.execute("insert into employees (first_name, last_name, role_id, manager_id) values ('"+args[0][0]+"', '"+args[0][1]+"', "+args[0][2]+", null)");
+      pool.execute("insert into employees (first_name, last_name, role_id, manager_id) values ('"+args[0][0]+"', '"+args[0][1]+"', "+args[0][2]+","+args[0][3]+")");
       break;
     case 'role':
       pool.execute("insert into roles (dep_id, title, salary) values ('"+args[0][0]+"', '"+args[0][1]+"', "+args[0][2]+")");
@@ -216,9 +216,9 @@ function addRole(dept_id, roleName, salary){
   console.log('ROLE'+roleName);
   saveToDB('role', [dept_id, roleName, salary]);
 }
-function addEmp(firstName, lastName, departmentID, roleID){
-  console.log('addEmp('+firstName+', '+lastName+', '+departmentID+', '+roleID+')');
-  saveToDB('emp', [firstName, lastName, departmentID, roleID]);
+function addEmp(firstName, lastName, roleID, managerID){
+  console.log('addEmp('+firstName+', '+lastName+', '+roleID+','+managerID+')');
+  saveToDB('emp', [firstName, lastName, roleID, managerID]);
   // employees.push({value: employees.length, first_name: firstName, last_name:lastName, de});
   load();
   console.table(employees);
@@ -251,10 +251,9 @@ function mainInquirerLoop() {
   .prompt(questions)
   .then((response) => {
     console.log(response);
-
+  load();
     switch(response.doWhat) {
       case 'View all employees':
-        console.log('here;'+employees);
         console.table(employees);
         break;
       case 'View all roles':

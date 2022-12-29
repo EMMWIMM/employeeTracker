@@ -84,7 +84,7 @@ async function load(){
 const questions = [{
   type:'list',
   message: ' What would you like to do?',
-  choices: ['View all employees', 'Add employee', 'Update employee role', 'View all roles', 'Add role', 'View all departments', 'Add department', 'Update employee department', 'Quit'],
+  choices: ['View all employees', 'Add employee', 'Update employee role', 'View all roles', 'Add role', 'View all departments', 'Add department', 'Quit'],
   name: 'doWhat'
 },
 {
@@ -125,7 +125,6 @@ const questions = [{
   choices: employeeChoices,
   when: function(answers){
     return answers.doWhat == 'Update employee role'
-      || answers.doWhat == 'Update employee department';
   }
 },
 {
@@ -281,9 +280,9 @@ function mainInquirerLoop() {
         console.log(''+response.chooseEmployee);
         updateEmpRole(response.chooseEmployee, response.chooseRole);
         break;
-      case 'Update employee department':
-        updateEmpDept('???');
-        break;
+      // case 'Update employee department':
+      //   updateEmpDept('???');
+      //   break;
       case 'Quit':
         process.exit(0);
         break;

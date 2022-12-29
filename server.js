@@ -113,9 +113,7 @@ const questions = [{
   //choices: module.exports.getDepts()
   choices : departments,
   when: function(answers){
-    return (answers.doWhat === 'Add employee' && answers.first_name !== undefined && answers.last_name !== undefined)
-        || (answers.doWhat === 'Add role')
-        || (answers.doWhat === 'Update employee department' && answers.chooseEmployee !== undefined)
+    return (answers.doWhat === 'Add role')
     ;
   }
 },
@@ -136,8 +134,20 @@ const questions = [{
   name: 'chooseRole',
   choices: roles,
   when: function (answers){
-    return (answers.doWhat === 'Add employee' &&answers.first_name !== undefined && answers.last_name !== undefined && answers.chooseDept !==undefined)
+    return (answers.doWhat === 'Add employee' &&answers.first_name !== undefined && answers.last_name !== undefined)
     || (answers.doWhat === 'Update employee role' && answers.chooseEmployee !== undefined);
+  }
+},
+{
+  type:'list',
+  message:'who is their manager?',
+  name: 'chooseManager',
+  //choices: module.exports.getDepts()
+  choices : employeeChoices,
+  when: function(answers){
+    return (answers.doWhat === 'Add employee' && answers.first_name !== undefined && answers.last_name !== undefined && answers.chooseRole !== undefined)
+
+    ;
   }
 },
   {
@@ -176,7 +186,7 @@ const questions = [{
 //   { id: 5, dep_name: 'accounting' }
 // ]
 function saveToDB(saveType, ...args){
-  // console.log('saveToDB('+saveType+', '+args+')');
+  console.log('saveToDB('+saveType+', '+args+')');;
   // console.log('args00: '+args[0][0]);
   switch(saveType) {
     case 'emp':
@@ -257,7 +267,7 @@ function mainInquirerLoop() {
         break;
 
       case 'Add employee':
-        addEmp(response.first_name, response.last_name, response.chooseDept, response.chooseROle);
+        addEmp(response.first_name, response.last_name, response.chooseRole, response. chooseManager);
         break;
       case 'Add role':
         addRole(response.chooseDept, response.addRole, response.salary)

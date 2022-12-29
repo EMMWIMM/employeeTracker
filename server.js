@@ -38,10 +38,10 @@ const pool = mysql.createPool({
 });
 async function load(){
   // get the promise implementation, we will use bluebird
-  roles =[];
-  departments=[];
-  employees = [];
-  employeeChoices=[];
+  roles.length =0;
+  departments.length=0;
+  employees.length = 0;
+  employeeChoices.length=0;
   const bluebird = require('bluebird');
 
   // create the connection, specify bluebird as Promise
@@ -63,7 +63,7 @@ async function load(){
   dept_rows.forEach((element) => {
     departments.push(element);
   });
-  console.log(departments);
+  // console.log(departments);
 
   // query database for employees
   var queryEmp =
@@ -176,8 +176,8 @@ const questions = [{
 //   { id: 5, dep_name: 'accounting' }
 // ]
 function saveToDB(saveType, ...args){
-  console.log('saveToDB('+saveType+', '+args+')');
-  console.log('args00: '+args[0][0]);
+  // console.log('saveToDB('+saveType+', '+args+')');
+  // console.log('args00: '+args[0][0]);
   switch(saveType) {
     case 'emp':
       pool.execute("insert into employees (first_name, last_name, role_id, manager_id) values ('"+args[0][0]+"', '"+args[0][1]+"', "+args[0][2]+", null)");

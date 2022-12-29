@@ -23,3 +23,6 @@ a Command line application using inquirer to manage and add employees, roles and
 - console.table
 -mysql2/promise
 -bluebird
+
+# Walkthrough video
+https://drive.google.com/file/d/1DkhKp584jDWFzctyb_QkEAOuaJ6gWiu5/view

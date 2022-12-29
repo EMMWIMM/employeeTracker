@@ -38,6 +38,10 @@ const pool = mysql.createPool({
 });
 async function load(){
   // get the promise implementation, we will use bluebird
+  roles =[];
+  departments=[];
+  employees = [];
+  employeeChoices=[];
   const bluebird = require('bluebird');
 
   // create the connection, specify bluebird as Promise
@@ -59,7 +63,7 @@ async function load(){
   dept_rows.forEach((element) => {
     departments.push(element);
   });
-  //console.log(departments);
+  console.log(departments);
 
   // query database for employees
   var queryEmp =
@@ -206,7 +210,8 @@ function addRole(dept_id, roleName, salary){
 function addEmp(firstName, lastName, departmentID, roleID){
   console.log('addEmp('+firstName+', '+lastName+', '+departmentID+', '+roleID+')');
   saveToDB('emp', [firstName, lastName, departmentID, roleID]);
-  employees.push({value: employees.length, name: firstName+' '+lastName});
+  // employees.push({value: employees.length, first_name: firstName, last_name:lastName, de});
+  load();
   console.table(employees);
 }
 function updateEmpRole(empID, roleID){
